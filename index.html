@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Achat-Revente Ventes Privées</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Achat-Revente · Ventes privées</h1>
+    <nav>
+      <button class="tab active" data-tab="calc">Calculateur</button>
+      <button class="tab" data-tab="stock">Stock &amp; ventes</button>
+      <button class="tab" data-tab="guide">Guide</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Calculateur -->
+    <section id="calc" class="panel active">
+      <h2>Est-ce que ce deal est rentable ?</h2>
+      <form id="calc-form" class="grid">
+        <label>Prix d'achat total du lot (€)<input type="number" step="0.01" min="0" name="buy" value="25"></label>
+        <label>Frais de port à l'achat (€)<input type="number" step="0.01" min="0" name="buyShip" value="5.90"></label>
+        <label>Quantité achetée<input type="number" step="1" min="1" name="qty" value="1"></label>
+        <label>Prix de revente visé (€ / pièce)<input type="number" step="0.01" min="0" name="sell" value="55"></label>
+        <label>Plateforme
+          <select name="platform" id="platform"></select>
+        </label>
+        <label>Commission plateforme (%)<input type="number" step="0.1" min="0" name="feePct" value="0"></label>
+        <label>Frais fixes / vente (€)<input type="number" step="0.01" min="0" name="feeFixed" value="0"></label>
+        <label>Emballage / envoi à ta charge (€)<input type="number" step="0.01" min="0" name="packaging" value="0.50"></label>
+        <label>Cotisations sociales (%)
+          <input type="number" step="0.1" min="0" name="social" value="12.3">
+          <small>Micro-entreprise, vente de marchandises. 0 si tu vends à titre occasionnel.</small>
+        </label>
+        <label>Marge nette visée (%)<input type="number" step="1" min="0" max="95" name="target" value="30"></label>
+      </form>
+
+      <div class="results" id="calc-results"></div>
+    </section>
+
+    <!-- Stock -->
+    <section id="stock" class="panel">
+      <h2>Stock &amp; ventes</h2>
+      <div class="stats" id="stats"></div>
+      <div id="dac7" class="alert" hidden></div>
+
+      <details open>
+        <summary>Ajouter un article</summary>
+        <form id="item-form" class="grid">
+          <input type="hidden" name="id">
+          <label>Article<input name="name" required placeholder="Sneakers Nike Air Max T42"></label>
+          <label>Source<input name="source" list="sources" placeholder="Veepee"></label>
+          <label>Date d'achat<input type="date" name="date"></label>
+          <label>Coût total (€, port inclus)<input type="number" step="0.01" min="0" name="cost" required></label>
+          <label>Prix visé (€)<input type="number" step="0.01" min="0" name="target"></label>
+          <label>Statut
+            <select name="status">
+              <option value="stock">En stock</option>
+              <option value="listed">En ligne</option>
+              <option value="sold">Vendu</option>
+            </select>
+          </label>
+          <label>Prix de vente réel (€)<input type="number" step="0.01" min="0" name="soldPrice"></label>
+          <label>Frais de vente (€)<input type="number" step="0.01" min="0" name="soldFees" value="0"></label>
+          <label>Date de vente<input type="date" name="soldDate"></label>
+          <label>Plateforme de vente<input name="soldOn" list="platforms-list" placeholder="Vinted"></label>
+          <div class="actions">
+            <button type="submit">Enregistrer</button>
+            <button type="reset" class="secondary">Annuler</button>
+          </div>
+        </form>
+      </details>
+      <datalist id="sources">
+        <option value="Veepee"><option value="Showroomprivé"><option value="Bazarchic">
+        <option value="Zalando Privé"><option value="Outlet / déstockage">
+      </datalist>
+      <datalist id="platforms-list"></datalist>
+
+      <div class="toolbar">
+        <select id="filter">
+          <option value="all">Tous</option>
+          <option value="unsold">Non vendus</option>
+          <option value="sold">Vendus</option>
+        </select>
+        <button id="export" class="secondary">Exporter CSV</button>
+        <label class="file secondary">Importer CSV<input type="file" id="import" accept=".csv,text/csv"></label>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Article</th><th>Source</th><th>Coût</th><th>Statut</th><th>Vendu</th><th>Bénéfice</th><th>Jours</th><th></th></tr>
+          </thead>
+          <tbody id="items"></tbody>
+        </table>
+      </div>
+      <p class="muted">Les données restent dans ton navigateur (localStorage). Exporte régulièrement en CSV pour les sauvegarder.</p>
+    </section>
+
+    <!-- Guide -->
+    <section id="guide" class="panel prose">
+      <h2>Démarrer l'achat-revente avec les ventes privées</h2>
+      <h3>1. Choisir ses produits</h3>
+      <ul>
+        <li>Vise des <strong>marques connues</strong> qui se revendent vite : sneakers, doudounes, sacs, montres, parfums scellés, électroménager de marque.</li>
+        <li>Avant d'acheter, vérifie le <strong>prix réellement vendu</strong> (filtre « vendus » sur eBay, annonces Vinted/Leboncoin) — pas le prix affiché par la vente privée.</li>
+        <li>Privilégie les <strong>tailles standards</strong> (M/L, 40–44 en chaussures) et les coloris neutres.</li>
+        <li>Règle simple : ne garde un deal que si la marge nette dépasse 25–30 % <em>après</em> tous les frais (utilise le calculateur).</li>
+      </ul>
+      <h3>2. Les pièges</h3>
+      <ul>
+        <li><strong>Délais de livraison</strong> de 2 à 6 semaines : ton argent est immobilisé, commence petit.</li>
+        <li>Lis les <strong>CGV</strong> du site : certaines ventes privées limitent les quantités ou interdisent la revente ; ton compte peut être fermé.</li>
+        <li>Garde toutes les <strong>factures</strong> : elles prouvent l'authenticité et servent à ta compta.</li>
+        <li>Frais cachés : port, emballage, retours, commissions, invendus à brader.</li>
+      </ul>
+      <h3>3. Le cadre légal (France)</h3>
+      <ul>
+        <li>Acheter <strong>dans le but de revendre</strong> avec un bénéfice, de façon régulière, c'est une <strong>activité commerciale</strong> : il faut un statut (la micro-entreprise est le plus simple, création gratuite sur le guichet unique de l'INPI).</li>
+        <li>Micro-entreprise « vente de marchandises » : cotisations d'environ <strong>12,3 % du chiffre d'affaires</strong>, plafond de CA de 188 700 €. Vérifie les taux en vigueur sur urssaf.fr.</li>
+        <li>Les plateformes transmettent au fisc les vendeurs qui dépassent <strong>30 ventes ou 2 000 € par an</strong> (directive DAC7). L'onglet Stock t'alerte quand tu t'en approches.</li>
+        <li>Vendre des objets personnels d'occasion reste non imposable, mais revendre du neuf acheté pour ça ne l'est pas.</li>
+      </ul>
+      <h3>4. Routine conseillée</h3>
+      <ol>
+        <li>Chaque matin : parcourir les ventes du jour (applis avec notifications).</li>
+        <li>Pour chaque article intéressant : vérifier le prix vendu → calculateur → décision.</li>
+        <li>À réception : photos propres sur fond neutre, annonce le jour même.</li>
+        <li>Chaque semaine : baisser de 10 % les articles en stock depuis plus de 30 jours.</li>
+        <li>Chaque mois : exporter le CSV et suivre le bénéfice réel.</li>
+      </ol>
+      <p class="muted">Les commissions des plateformes et les taux sociaux changent souvent : les valeurs préremplies sont indicatives et modifiables.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
